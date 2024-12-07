@@ -10,28 +10,20 @@ async function predictClassification(model, image) {
       .expandDims()
       .toFloat()
    
-    const prediction = model.predict(tensor);
-    const score = await prediction.data();
-    const confidenceScore = Math.max(...score) * 100;
-   
-    const classes = ['Cancer', 'Non-cancer'];
-   
-    const classResult = tf.argMax(prediction, 1).dataSync()[0];
-    const label = classes[classResult];
-   
-    let result, suggestion;
-   
-    if (label === 'Cancer') {
-      result = "Cancer"
-      suggestion = "Segera periksa ke dokter!"
+    const prediction = await  model.predict(tensor).data();
+    const result = prediction[0] > 0.5 ? "Cancer" : 'Non-Cancer';
+    
+    let label,suggestion
+
+    if(result === 'Cancer'){
+        label = "Cancer"
+        suggestion = "Segera periksa ke dokter!"
+    }else{
+        label = "Non-cancer"
+        suggestion="Penyakit kanker tidak terdeteksi."
     }
    
-    if (label === 'Non-cancer') {
-      result = "Non-cancer"
-      suggestion = "Penyakit kanker tidak terdeteksi."
-    }
-   
-    return {label,result, suggestion };
+    return {label, suggestion };
   }catch (error) {
     throw new InputError(`Terjadi kesalahan input: ${error.message}`)
 }

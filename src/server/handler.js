@@ -4,7 +4,7 @@ const storeData = require('../services/storeData');
 async function postPredictHandler(request, h) {
     const { image } = request.payload;
     const { model } = request.server.app;
-    const { label, result, suggestion } = await predictClassification(model, image);
+    const { label,suggestion } = await predictClassification(model, image);
 
     const id = crypto.randomUUID();
     const createdAt = new Date().toISOString();
